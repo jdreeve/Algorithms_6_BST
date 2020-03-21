@@ -1,3 +1,13 @@
+/**
+ * HW 6: Binary Search Trees
+ * Written for CSCI 333, Prof. Adam Whitley
+ * Implements BSTNode object, one node of a binary search tree.
+ * Author:		Jesse Reeve
+ * Contact: 	jreeve@unca.edu
+ * Created:		3/20/2020
+ * Modified:	3/20/2020
+ */
+
 package bst;
 
 public class BinarySearchTree {
@@ -38,5 +48,7 @@ public class BinarySearchTree {
 		return size;
 	}
 	
-	
+	public int searchwrapper(int key) {
+		return search(key);
+	}
 }
