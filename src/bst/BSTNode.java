@@ -5,7 +5,6 @@
  * Author:		Jesse Reeve
  * Contact: 	jreeve@unca.edu
  * Created:		3/20/2020
- * Modified:	3/20/2020
  */
 
 package bst;
