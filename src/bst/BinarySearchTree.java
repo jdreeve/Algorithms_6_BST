@@ -41,6 +41,7 @@ public class BinarySearchTree {
 	}
 	
 	/**
+	 * Returns the size of the tree.
 	 * @return size - the value of size
 	 */
 	public int getSize() {
@@ -48,7 +49,7 @@ public class BinarySearchTree {
 	}
 	
 	/**
-	 * 
+	 * Searches for a node with the indicated key.
 	 * @param key - key value to search for
 	 * @return node with correct key (null if not found)
 	 */
@@ -58,6 +59,7 @@ public class BinarySearchTree {
 	
 	
 	/**
+	 * Returns the node with smallest key.
 	 * @return minimum key in tree (null if empty)
 	 */
 	public BSTNode minimumWrapper() {
@@ -65,6 +67,7 @@ public class BinarySearchTree {
 	}
 	
 	/**
+	 * Returns the node with largest key.
 	 * @return maximum value in tree (null if empty)
 	 */
 	public BSTNode maximumWrapper() {
@@ -72,6 +75,7 @@ public class BinarySearchTree {
 	}
 	
 	/**
+	 * Returns the successor of a node.
 	 * @param node - the input node
 	 * @return the node with the next highest key value (null if none)
 	 */
@@ -80,6 +84,7 @@ public class BinarySearchTree {
 	}
 	
 	/**
+	 * Returns the predecessor of a node.
 	 * @param node - the input node
 	 * @return the node with the next smallest key value (null if none)
 	 */
@@ -88,6 +93,7 @@ public class BinarySearchTree {
 	}
 	
 	/**
+	 * Inserts a new node.
 	 * @param node - the node to be inserted
 	 */
 	public void insertWrapper(BSTNode node) {
@@ -151,6 +157,44 @@ public class BinarySearchTree {
 		inOrderTraversal(node);
 		System.out.println();
 	}//inOrderTraversalWrapper
+	
+	/**
+	 * Locates order statistic i in entire tree.
+	 * @param i - the order statistic to be located
+	 * @return the order statistic (type BSTNode) (null if not found)
+	 */
+	public BSTNode selectWrapper(int i) {
+		return select(i,this.root);
+	}
+	
+	/**
+	 * Locates order statistic i in subtree rooted at node.
+	 * @param i
+	 * @param node
+	 * @return order statistic i (type BSTNode) (null if not found)
+	 */
+	public BSTNode selectWrapper(int i, BSTNode node) {
+		return select(i,node);
+	}
+	
+	/**
+	 * Ranks a node in the full tree.
+	 * @param node - the node to be ranked
+	 * @return the rank (type int)
+	 */
+	public int rankWrapper(BSTNode node) {
+		return rank(node, this.root);
+	}
+	
+	/**
+	 * Ranks a node in a given subtree.
+	 * param node - the node to be ranked
+	 * @param root - the root of the subtree to search
+	 * @return
+	 */
+	public int rankWrapper(BSTNode node, BSTNode root) {
+		return rank(node, root);
+	}
 	
 	private BSTNode search(int key) {
 		BSTNode target = root;
@@ -218,9 +262,29 @@ public class BinarySearchTree {
 		}
 		else y.setRight(node);
 		this.size++;
+		//Augmentation for order statistic queries
+		node.setSize(1);
+		while (node.getP() != null) {
+			node = node.getP();
+			node.setSize(node.getSize()+1);
+		}
 	}//insert
 	
 	private void delete(BSTNode node) {
+		BSTNode y = null;
+		//First augmentation for order statistic queries (1/2)
+		BSTNode q = null;
+		if (null == node.getLeft() || null == node.getRight()) {
+			q = node.getP();
+		}//if
+		else {
+			y = successor(node);
+			if (y.getP() != node) {
+				q = y.getP();
+			}//if
+			else q = y;
+		}
+		//end first augmentation
 		if (search(node.getKey()) != null) {
 			this.size--;
 		}
@@ -231,7 +295,7 @@ public class BinarySearchTree {
 			transplant(node,node.getLeft());
 		}//if
 		else {
-			BSTNode y = successor(node);
+			y = successor(node);
 			if (node != y.getP()) {
 				transplant(y,y.getRight());
 				y.setRight(node.getRight());
@@ -241,6 +305,15 @@ public class BinarySearchTree {
 			y.setLeft(node.getLeft());
 			y.getLeft().setP(y);
 		}//if
+		//Second augmentation for order statistic queries (2/2)
+		while (q != null) {
+			int qsize = 1;
+			if (q.getLeft() != null) qsize += q.getLeft().getSize();
+			if (q.getRight() != null) qsize += q.getRight().getSize();
+			q.setSize(qsize);
+			q = q.getP();
+		}
+		//end second augmentation
 	}//delete
 	
 	private void preOrderTraversal(BSTNode node) {
@@ -266,4 +339,33 @@ public class BinarySearchTree {
 			inOrderTraversal(node.getRight());
 			}//if
 	}
+	
+	private BSTNode select(int i, BSTNode node) {
+		if (node == null) return null;
+		int r = 1;
+		if (node.getLeft() != null) r += node.getLeft().getSize();
+		if (i == r) {
+			return node;
+		}//if
+		else if (i < r) {//look in left subtree
+			return select(i,node.getLeft());
+		}//else
+		else return select(i-r, node.getRight());
+	}
+	
+	private int rank(BSTNode node, BSTNode root) {
+		if (node == null) return -1;
+		int r = 1;
+		if (node.getLeft() != null) r += node.getLeft().getSize();
+		BSTNode y = node;
+		while (y != root) {
+			if (y == y.getP().getRight()) {//if y is a right child
+				if (y.getP().getLeft() != null) r += y.getP().getLeft().getSize();
+				r++;
+			}//if
+			y = y.getP();
+		}//while
+		return r;
+	}
+	
 }

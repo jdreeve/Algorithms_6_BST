@@ -15,6 +15,7 @@ public class BSTNode {
 	private BSTNode left;
 	private BSTNode right;
 	int key;
+	int size;
 	
 	/**
 	 * Constructor for BSTNode object.
@@ -25,7 +26,24 @@ public class BSTNode {
 		this.p = null;
 		this.left = null;
 		this.right = null;
+		this.size = 0;
 	}//constructor
+
+
+	/**
+	 * @return the value of size
+	 */
+	public int getSize() {
+		return size;
+	}
+
+
+	/**
+	 * @param size the intended value of size
+	 */
+	public void setSize(int size) {
+		this.size = size;
+	}
 
 
 	/**
